@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Spinner from "../components/spinner";
 import MovieInfo from "../components/MovieInfo";
 import { cn } from "../lib/utils";
+import Loader from "../components/Loader";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -53,7 +53,7 @@ const MovieOverview = () => {
    }, [id]);
 
    if (isLoading) {
-      return <Spinner />;
+      return <Loader />;
    }
 
    const formatCurrency = (num) => {

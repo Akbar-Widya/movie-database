@@ -1,4 +1,4 @@
-const Spinner = () => {
+const Loader = () => {
    return (
       <div role="status">
          <svg
@@ -22,4 +22,4 @@ const Spinner = () => {
    );
 };
 
-export default Spinner;
+export default Loader;

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Spinner from "../components/Spinner";
 import MovieCard from "../components/MovieCard";
 import { useDebounce } from "react-use";
 import { getTrendingMovies, updateSearchCount } from "../appwrite";
 import Search from "../components/Search";
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader";
 
 // API - a set of rules that allows one software app to talk to one another
 const API_BASE_URL = "https://api.themoviedb.org/3";
@@ -128,7 +128,7 @@ const HomePage = () => {
                <h2>All Movies</h2>
 
                {isLoading ? (
-                  <Spinner />
+                  <Loader />
                ) : errorMessage ? (
                   <p className="text-white">{errorMessage}</p>
                ) : (
