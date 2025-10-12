@@ -5,17 +5,17 @@ const Footer = () => {
          <ul className="flex gap-4 items-center justify-center">
             <li>
                <a href="https://www.linkedin.com/in/kian-pamungkas" target="_blank">
-                  <img src="src/assets/linkedin.svg" alt="linkedin-kian" />
+                  <img src="../assets/linkedin.svg" alt="linkedin-kian" />
                </a>
             </li>
             <li >
                <a href="https://github.com/Akbar-Widya/react-js-projects/tree/main/my-first-react-app" target="_blank">
-                  <img src="src/assets/github.svg" alt="github-kian" />
+                  <img src="../assets/github.svg" alt="github-kian" />
                </a>
             </li>
             <li>
                <a href="https://www.instagram.com/kianpamungkas.pmk" target="_blank">
-                  <img src="src/assets/instagram.svg" alt="instagram-kian" />
+                  <img src="../assets/instagram.svg" alt="instagram-kian" />
                </a>
             </li>
          </ul>
