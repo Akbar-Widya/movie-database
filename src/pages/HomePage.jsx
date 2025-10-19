@@ -46,7 +46,6 @@ const HomePage = () => {
             throw new Error("Failed to fetch movies");
          }
          const data = await response.json();
-         // console.log(data);
          if (data.Response === "False") {
             setErrorMessage(data.error || "Failed to fetch movies");
             setMovieList([]);
@@ -114,7 +113,6 @@ const HomePage = () => {
                               to={`/movie/${movie.movie_id}`}
                               className="flex flex-row items-center"
                            >
-                              {console.log(movie)}
                               <p>{index + 1}</p>
                               <img src={movie.poster_url} alt={movie.title} />
                            </Link>

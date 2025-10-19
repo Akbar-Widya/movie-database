@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import MovieInfo from "../components/MovieInfo";
-import { cn } from "../lib/utils";
 import Loader from "../components/Loader";
+import MovieCard from "../components/MovieCard";
 
 const API_BASE_URL = "https://api.themoviedb.org/3";
 
@@ -19,9 +19,33 @@ const API_OPTIONS = {
 const MovieOverview = () => {
    const { id } = useParams();
    const [movie, setMovie] = useState("");
+   const [relatedMovies, setRelatedMovies] = useState([]);
    const [isLoading, setIsLoading] = useState(true);
+   const [isRelatedLoading, setIsRelatedLoading] = useState(false);
+   console.log(movie);
 
-   console.log(id);
+   const fetchRelatedMovies = async (genreId, currentMovieId) => {
+      setIsRelatedLoading(true);
+      try {
+         const response = await fetch(
+            `${API_BASE_URL}/discover/movie?with_genres=${genreId}&sort_by=popularity.desc`,
+            API_OPTIONS
+         );
+
+         if (!response.ok) {
+            throw new Error("Failed to fetch related movies.");
+         }
+
+         const data = await response.json();
+
+         setRelatedMovies(data.results.slice(0, 6));
+      } catch (error) {
+         console.error("Error fetching related movies:", error);
+         setRelatedMovies([]);
+      } finally {
+         setIsRelatedLoading(false);
+      }
+   };
 
    useEffect(() => {
       const fetchMovieDetails = async () => {
@@ -39,6 +63,12 @@ const MovieOverview = () => {
 
             const data = await response.json();
             setMovie(data);
+
+            if (data.genres && data.genres.length > 0) {
+               const genreIds = data.genres.slice(0, 3).map(genre => genre.id);
+               const genreId = genreIds.join('|');
+               fetchRelatedMovies(genreId, movie.id);
+            }
          } catch (error) {
             console.error(error);
          } finally {
@@ -49,7 +79,6 @@ const MovieOverview = () => {
       if (id) {
          fetchMovieDetails();
       }
-      console.log("use effect activated");
    }, [id]);
 
    if (isLoading) {
@@ -58,17 +87,15 @@ const MovieOverview = () => {
 
    const formatCurrency = (num) => {
       if (num >= 1000000000) {
-         return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + ' Billion'
+         return (num / 1000000000).toFixed(1).replace(/\.0$/, "") + " Billion";
       } else if (num >= 1000000) {
-         return (num / 1000000).toFixed(1).replace(/\.0$/, '') + ' Million'
+         return (num / 1000000).toFixed(1).replace(/\.0$/, "") + " Million";
       } else if (num >= 1000) {
-         return (num / 1000).toFixed(1).replace(/\.0$/, '') + ' Thousand'
+         return (num / 1000).toFixed(1).replace(/\.0$/, "") + " Thousand";
       } else {
-         return num
+         return num;
       }
-   }
-
-   console.log(movie);
+   };
    return (
       <main>
          <div className="wrapper">
@@ -138,11 +165,21 @@ const MovieOverview = () => {
                </div>
             </section>
 
-            <section className="bg-gray-800/50 p-6 rounded-lg text-white">
+            <section className="bg-gray-800/50 p-6 rounded-lg text-white mb-12">
                <div className="flex flex-col lg:flex-row items-start gap-6">
                   <div className="flex-1">
-                     <MovieInfo label="Genres" value={movie.overview} />
-                     
+                     <MovieInfo label="Overview" value={movie.overview} />
+
+                     <MovieInfo
+                        label="Genres"
+                        value={movie.genres.map((genre) => (
+                           <>
+                              <span className="first:hidden">●</span>
+                              <li className="list-none">{genre.name}</li>
+                           </>
+                        ))}
+                     />
+
                      <MovieInfo
                         label="Release Date"
                         value={movie.release_date}
@@ -165,14 +202,22 @@ const MovieOverview = () => {
                         value={movie.spoken_languages.map((language) => (
                            <>
                               <span className="first:hidden">●</span>
-                              <li className="list-none">{language.english_name}</li>
+                              <li className="list-none">
+                                 {language.english_name}
+                              </li>
                            </>
                         ))}
                      />
 
-                     <MovieInfo label="Budget" value={`$${formatCurrency(movie.budget)}`} />
+                     <MovieInfo
+                        label="Budget"
+                        value={`$${formatCurrency(movie.budget)}`}
+                     />
 
-                     <MovieInfo label="Revenue" value={`$${formatCurrency(movie.revenue)}`} />
+                     <MovieInfo
+                        label="Revenue"
+                        value={`$${formatCurrency(movie.revenue)}`}
+                     />
 
                      <MovieInfo label="Tagline" value={movie.tagline} />
 
@@ -185,13 +230,26 @@ const MovieOverview = () => {
                            </>
                         ))}
                      />
-
                   </div>
 
                   <Link to="/" className="bg-purple-600 px-4 py-3 rounded-md">
                      Visit Homepage
                   </Link>
                </div>
+            </section>
+
+            <section className="related-movies">
+               <h2>Recommendation</h2>
+
+               {isRelatedLoading ? (
+                  <Loader />
+               ) : (
+                  <ul>
+                     {relatedMovies.map((movie) => (
+                        <MovieCard movie={movie} />
+                     ))}
+                  </ul>
+               )}
             </section>
          </div>
       </main>
