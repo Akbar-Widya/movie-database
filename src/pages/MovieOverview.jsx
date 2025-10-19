@@ -22,7 +22,6 @@ const MovieOverview = () => {
    const [relatedMovies, setRelatedMovies] = useState([]);
    const [isLoading, setIsLoading] = useState(true);
    const [isRelatedLoading, setIsRelatedLoading] = useState(false);
-   console.log(movie);
 
    const fetchRelatedMovies = async (genreId, currentMovieId) => {
       setIsRelatedLoading(true);
